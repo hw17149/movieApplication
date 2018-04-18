@@ -187,4 +187,30 @@ public class ManageReview {
 			session.close();
 		}
 	}
+	
+	public List<Review> listOfReview(Integer userId, Integer movieId){
+		Session session = factory.openSession();
+		Transaction tx = null;
+		List<Review> theReviews = null;
+		try
+		{
+			tx = session.beginTransaction();
+			//User User = (User)session.get(User.class, UserID);
+			
+			theReviews = session.createQuery("from Review").list();//User is the class name not the table name!!!!
+			
+			tx.commit();
+			return theReviews;
+		}
+		catch(HibernateException e)
+		{
+			if(tx != null) tx.rollback();
+			e.printStackTrace();
+		}
+		finally
+		{
+			session.close();
+		}
+		return theReviews;
+	}
 }
