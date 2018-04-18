@@ -26,6 +26,7 @@ public class ManageMovie {
 	
 	public static void main(String[] args) {
 		ManageMovie mm = new ManageMovie();
+		//mm.addMovie();
 		
 		List<Movie> movies = mm.getAlphabetical();
 		for(Movie m: movies) {
@@ -330,7 +331,7 @@ public class ManageMovie {
 			tx = session.beginTransaction();
 			//Movie Movie = (Movie)session.get(Movie.class, MovieID);
 			
-			ordered = session.createQuery("from Movie").list();//I HOPE THIS WORKS
+			ordered = session.createQuery("from Movie m ORDER BY m.title").list();//I HOPE THIS WORKS
 			
 			tx.commit();
 			return ordered;

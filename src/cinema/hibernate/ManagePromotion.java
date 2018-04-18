@@ -16,6 +16,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import cinema.user.entity.CreditCard;
 import cinema.user.entity.Promotion;
+import cinema.user.entity.Ticket;
 
 public class ManagePromotion {
 
@@ -103,8 +104,83 @@ public class ManagePromotion {
 		}
 	}
 	
+	public void updateExpireDate(Integer promoId, String expire)
+	{
+		Session session = factory.openSession();
+		Transaction tx = null;
+		
+		try
+		{
+			tx = session.beginTransaction();
+			Promotion promotion = (Promotion)session.get(Promotion.class, promoId);
+			
+			promotion.setExpire(expire);
+			session.update(promotion);
+			
+			tx.commit();
+		}
+		catch(HibernateException e)
+		{
+			if(tx != null) tx.rollback();
+			e.printStackTrace();
+		}
+		finally
+		{
+			session.close();
+		}
+	}
 	
+	public void updateDiscount(Integer promoId, double discount)
+	{
+		Session session = factory.openSession();
+		Transaction tx = null;
+		
+		try
+		{
+			tx = session.beginTransaction();
+			Promotion promotion = (Promotion)session.get(Promotion.class, promoId);
+			
+			promotion.setDiscount(discount);
+			session.update(promotion);
+			
+			tx.commit();
+		}
+		catch(HibernateException e)
+		{
+			if(tx != null) tx.rollback();
+			e.printStackTrace();
+		}
+		finally
+		{
+			session.close();
+		}
+	}
 	
+	public void updatePromoCode(Integer promoId, String promoCode)
+	{
+		Session session = factory.openSession();
+		Transaction tx = null;
+		
+		try
+		{
+			tx = session.beginTransaction();
+			Promotion promotion = (Promotion)session.get(Promotion.class, promoId);
+			
+			promotion.setPromoCode(promoCode);
+			session.update(promotion);
+			
+			tx.commit();
+		}
+		catch(HibernateException e)
+		{
+			if(tx != null) tx.rollback();
+			e.printStackTrace();
+		}
+		finally
+		{
+			session.close();
+		}
+	}
 	
 	/*public List<User> listOfUsers(Integer userId){
 		Session session = factory.openSession();
