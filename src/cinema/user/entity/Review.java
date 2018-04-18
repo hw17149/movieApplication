@@ -28,67 +28,66 @@ public class Review {
 	private Integer movieId;
 	
 	//Column name must be the exact name with case sensitivity of the attribute inside the db table.
-	@Column(name="price")
-	private Integer price;
+	@Column(name="rating")
+	private Integer rating;
 	
-	@Column(name="expire")
-	private String expire;
+	@Column(name="summary")
+	private String summary;
 	
-	@Column(name="discount")
-	private double discount;
-	
-	@Column(name="promoCode")
-	private String promoCode;
+	@Column(name="date")
+	private String date;
+
+	public Review(Integer userId, Integer movieId, Integer rating, String summary, String date) {
+		super();
+		this.userId = userId;
+		this.movieId = movieId;
+		this.rating = rating;
+		this.summary = summary;
+		this.date = date;
+	}
+
+	public Integer getUserId() {
+		return userId;
+	}
+
+	public void setUserId(Integer userId) {
+		this.userId = userId;
+	}
+
+	public Integer getMovieId() {
+		return movieId;
+	}
+
+	public void setMovieId(Integer movieId) {
+		this.movieId = movieId;
+	}
+
+	public Integer getRating() {
+		return rating;
+	}
+
+	public void setRating(Integer rating) {
+		this.rating = rating;
+	}
+
+	public String getSummary() {
+		return summary;
+	}
+
+	public void setSummary(String summary) {
+		this.summary = summary;
+	}
+
+	public String getDate() {
+		return date;
+	}
+
+	public void setDate(String date) {
+		this.date = date;
+	}
 
 	
 	//This constructor made by right clicking > Source > generate constructor with fields
-	public Review(Integer price, String expire, double discount, String promoCode) {
-		super();
-		this.price = price;
-		this.expire = expire;
-		this.discount = discount;
-		this.promoCode = promoCode;
-	}
-
-	public Integer getPromoId() {
-		return promoId;
-	}
-
-	public void setPromoId(Integer promoId) {
-		this.promoId = promoId;
-	}
-
-	public Integer getPrice() {
-		return price;
-	}
-
-	public void setPrice(Integer price) {
-		this.price = price;
-	}
-
-	public String getExpire() {
-		return expire;
-	}
-
-	public void setExpire(String expire) {
-		this.expire = expire;
-	}
-
-	public double getDiscount() {
-		return discount;
-	}
-
-	public void setDiscount(double discount) {
-		this.discount = discount;
-	}
-
-	public String getPromoCode() {
-		return promoCode;
-	}
-
-	public void setPromoCode(String promoCode) {
-		this.promoCode = promoCode;
-	}
 	
 	//toString used for debugging
 /*	@Override
