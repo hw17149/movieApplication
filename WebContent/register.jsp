@@ -15,6 +15,9 @@ input[type=text], input[type=password] {
     background: #f1f1f1;
 }
 
+
+   .require:after { content:" *"; }
+
 select {
   padding: 15px;
   margin: 5px 0 22px 0;
@@ -25,7 +28,7 @@ select {
 
 
 label {
-  width: 100%;
+  width: 80	%;
   padding: 15px;
   margin: 5px 0 22px 0;
   display: inline-block;
@@ -133,6 +136,7 @@ hr {
 <body>
 
 <h2>Registration</h2>
+<h3>* indicates required field</h3>
 
 <!-- <button onclick="document.getElementById('id01').style.display='block'" style="width:auto;">Sign Up</button> -->
 
@@ -142,15 +146,17 @@ hr {
     <div class="container">
       <h1>Sign Up</h1>
       <p>Please fill in this form to create an account.</p>
+      <h3>* indicates required field</h3>
       <hr>
-      <label for="first-name"><b>First Name</b></label>
-      <input type="text" placeholder="First Name" name="first-name" required>
+      <label for="first-name"><b>First Name *</b></label>
+      <input type="text" placeholder="First Name" class="require" name="first-name" required>
 
-      <label for="last-name"><b>Last Name</b></label>
+      <label for="last-name"><b>Last Name *</b></label>
       <input type="text" placeholder="Last Name" name="last-name" required>
 
-      <label for="birthdate"><b>Date of Birth</b></label>
-      <select id="birthyear" name="birthyear" required>
+      <label for="birthdate"><b>Date of Birth</b></label><p></p>
+      <select id="birthyear" name="birthyear"placeholder="%00">
+      	<option value="%00">Select Year</option>
         <option value="2018">2018</option>
         <option value="2017">2017</option>
         <option value="2016">2016</option>
@@ -271,7 +277,8 @@ hr {
         <option value="1901">1901</option>
         <option value="1900">1900</option>
       </select>
-      <select id="birthmonth" name="birthmonth" required>
+      <select id="birthmonth" name="birthmonth" placeholder="%00">
+      	<option value="%00">Month</option>
         <option value="01">January</option>
         <option value="02">February</option>
         <option value="03">March</option>
@@ -285,7 +292,8 @@ hr {
         <option value="11">November</option>
         <option value="12">December</option>
       </select>
-      <select id="birthday" name="birthday" required>
+      <select id="birthday" name="birthday" placeholder="%00">
+      	<option value="%00">Day</option>
         <option value="01">01</option>
         <option value="02">02</option>
         <option value="03">03</option>
@@ -317,19 +325,25 @@ hr {
         <option value="29">29</option>
         <option value="30">30</option>
         <option value="31">31</option>
-      </select>
+      </select><p></p>
 
-      <label for="email"><b>Email</b></label>
+      <label for="email"><b>Email *</b></label>
       <input type="text" placeholder="Enter Email" name="email" required>
 
-      <label for="psw"><b>Password</b></label>
+      <label for="psw"><b>Password *</b></label>
       <input type="password" placeholder="Enter Password" name="psw" required>
 
-      <label for="psw-confirm"><b>Confirm Password</b></label>
+      <!-- <label for="psw-confirm"><b>Confirm Password</b></label>
       <input type="password" placeholder="Confirm Password" name="psw-confirm" required>
-      
+      -->
       <label>
-        <input type="checkbox" name="subscribe" value="1" style="margin-bottom:15px"> Subscribe to promotional emails
+        I would like to receive promotional emails
+        
+        <form action="">
+		  <input type="radio" name="subscribe" value="true" checked="checked"> Yes<br>
+		  <input type="radio" name="subscribe" value="false"> No<br>
+		  
+</form>
       </label>
 
       

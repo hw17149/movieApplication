@@ -18,9 +18,12 @@
 	String location = null;
 	int userType = 1;
 	boolean confirmation = false;
-	boolean subscribed = true;
-	if(request.getParameter("subscribe") !="1"){
-		subscribed = false;
+	boolean sub;
+	String subscribed = request.getParameter("subscribe");
+	if(subscribed.equals("true")){
+		sub = true;
+	}else{
+		sub = false;
 	}
 	String year = request.getParameter("birthyear");
 	String month = request.getParameter("birthmonth");
@@ -40,9 +43,9 @@
 	Properties props = sendemail.makeProps();
 	sendemail.registerConfirmation(props, un, pw, email);
 	
-	mu.addUser(userName, fname, lname, email, password, location, userType, confirmation, subscribed, bDate, resetPassword);
+	mu.addUser(userName, fname, lname, email, password, location, userType, confirmation, sub, bDate, resetPassword);
 %>
 	<b>Confirmation sent to </b><%= request.getParameter("email")%><b>. Click the link sent to confirm account.</b><br/>
-	<b>LOGIN SUCCESSFUL</b> <% } %>
+	<b>Redirecting to home page</b> <% response.setHeader("Refresh", "3; index.html");} %>
 </body>
 </html>

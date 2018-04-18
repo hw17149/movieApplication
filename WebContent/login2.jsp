@@ -72,7 +72,7 @@ xbtn {
 
 /* Float cancel and signup buttons and add an equal width */
 .cancelbtn, .signupbtn {
-  align: center;
+  float: left;
   width: 50%;
 }
 
@@ -173,19 +173,24 @@ hr {
 
 <div class="modal">
   
-  <form class="modal-content" action="resetSent.jsp" method="POST">
+  <form class="modal-content" action="loginCheck2.jsp" method="POST">
     <div class="container">
-      <h1>Reset Password</h1>
+      <h1>Log In</h1>
       <p></p>
       <hr>
       
-      <label for="email"><b>Email to reset</b></label>
+      <label for="email"><b>Email</b></label>
       <input type="text" placeholder="Enter Email" name="email">
+
+      <label for="psw"><b>Password</b></label>
+      <input type="password" placeholder="Enter Password" name="psw">
+
+
       
 
       <div class="clearfix">
-        
-        <button type="submit" class="signupbtn">Reset Password</button>
+        <button type="button" onclick="location.href='reset.jsp'" class="cancelbtn">Forgot Password</button>
+        <button type="submit" class="signupbtn">Log In</button>
       </div>
     </div>
   </form>

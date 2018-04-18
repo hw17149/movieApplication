@@ -173,7 +173,7 @@ hr {
 
 <div class="modal">
   
-  <form class="modal-content" action="sent.jsp" method="POST">
+  <form class="modal-content" action="loginCheck.jsp" method="POST">
     <div class="container">
       <h1>Log In</h1>
       <p></p>
