@@ -193,7 +193,7 @@ public class ManageReview {
 		}
 	}
 	
-	public List<Review> listOfReview(Integer userId, Integer movieId){
+	public List<Review> getReviewList(){
 		Session session = factory.openSession();
 		Transaction tx = null;
 		List<Review> theReviews = null;
