@@ -154,7 +154,7 @@ hr {
       <label for="last-name"><b>Last Name *</b></label>
       <input type="text" placeholder="Last Name" name="last-name" required>
 
-      <label for="birthdate"><b>Date of Birth</b></label><p></p>
+      <label for="birthdate"><b>Date of Birth</b></label> <p></p>
       <select id="birthyear" name="birthyear"placeholder="%00">
       	<option value="%00">Select Year</option>
         <option value="2018">2018</option>

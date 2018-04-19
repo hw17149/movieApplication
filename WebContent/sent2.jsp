@@ -5,19 +5,19 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>Insert title here</title>
 </head>
 <body>
 <%
-	String userName = null;
+	String userName = request.getParameter("username");
 	String fname = request.getParameter("first-name");
 	String lname = request.getParameter("last-name");
-	String email = request.getParameter("email");
+	String email = request.getParameter("mail");
 	String password = request.getParameter("psw");
 	String location = null;
-	int userType = 1;
-	boolean confirmation = false;
+	String strUserType = request.getParameter("usertype");
+	int userType = Integer.parseInt(strUserType);
+	boolean confirmation = true;
 	boolean sub;
 	String subscribed = request.getParameter("subscribe");
 	if(subscribed.equals("true")){
@@ -31,21 +31,19 @@
 	String bDate = year + "-" + month + "-" + day;
 	boolean resetPassword = false;
 	
+	System.out.println(userName);
+	System.out.println(fname);
+	System.out.println(lname);
+	
 	ManageUser mu = new ManageUser();
 	if(!mu.isValidEmail(email)){ %>
-		email already registered, redirecting back to sign up page
-		<% response.setHeader("Refresh", "3; register.jsp"); %>
-	<% } else {
-	
-	final String un = "cinema4050@gmail.com";
-	final String pw = "movie4050";
-	SendEmail sendemail = new SendEmail();
-	Properties props = sendemail.makeProps();
-	sendemail.registerConfirmation(props, un, pw, email);
+		email already registered.
+	<% } else {	
 	
 	mu.addUser(userName, fname, lname, email, password, location, userType, confirmation, sub, bDate, resetPassword);
-%>
-	<b>Confirmation sent to </b><%= request.getParameter("email")%><b>. Click the link sent to confirm account.</b><br/>
-	<b>Redirecting to home page</b> <% response.setHeader("Refresh", "3; index.html");} %>
+	}
+	%>
+	
+	<b>Redirecting to Admin page...</b> <% response.setHeader("Refresh", "3; admin.jsp"); %>
 </body>
 </html>
