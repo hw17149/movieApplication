@@ -2,6 +2,7 @@ package cinema.user.entity;
 
 //Imports gotten by right click > source > organize imports
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -55,6 +56,7 @@ public class User {
 	
 	@Column(name="resetPassword")
 	private boolean resetPassword;
+
 	
 	public User() {
 		

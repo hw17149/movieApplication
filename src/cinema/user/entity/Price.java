@@ -14,7 +14,7 @@ import javax.persistence.Table;
  * Entity maps to the mysql table and the "@Column" maps the column name to the appropriate variables
  */
 @Entity
-@Table(name="creditcard")
+@Table(name="price")
 public class Price {
 	
 	@Id

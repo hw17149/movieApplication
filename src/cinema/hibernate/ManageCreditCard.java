@@ -31,7 +31,7 @@ public class ManageCreditCard {
 	
 	
 	
-	public Integer addCreditCard(Integer creditCardNo, String expDate, String address, Integer userId)
+	public String addCreditCard(String creditCardNo, String expDate, String address, Integer userId)
 	{
 		Session session = factory.openSession();
 		Transaction tx = null;
