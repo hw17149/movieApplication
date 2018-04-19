@@ -12,6 +12,8 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.query.Query;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import cinema.user.entity.User;
@@ -27,12 +29,14 @@ public class ManageReview {
 			.buildSessionFactory();
 	
 	public static void main(String[] args) {
+		ManageReview rw = new ManageReview();
 		
+		System.out.println(rw.averageReview(1));
 	}
 	
 	
 	
-	public Integer Review(Integer userId, Integer movieId, Integer rating, String summary, String date)
+	public Integer Review(Integer userId, Integer movieId, String summary, Integer rating, String date)
 	{
 		Session session = factory.openSession();
 		Transaction tx = null;
@@ -41,7 +45,7 @@ public class ManageReview {
 		try
 		{
 			tx = session.beginTransaction();
-			Review review = new Review(userId, movieId, rating, summary, date);
+			Review review = new Review(userId, movieId, summary, rating, date);
 			//creditCardNo = (Integer)session.save(showTime);
 			tx.commit();
 		}
@@ -58,7 +62,7 @@ public class ManageReview {
 		return promoId;
 	}
 
-	public Review getReview(Integer userId, Integer movieId)
+	public Review getReview(Integer reviewNo)
 	{
 		Session session = factory.openSession();
 		Review review = null;
@@ -66,8 +70,8 @@ public class ManageReview {
 		
 		try
 		{
-			//review = (Review)session.get(Review.class, userId);
-			review = (Review) session.createQuery("from Review r where r.userId=" + userId + "and r.movieId="+movieId);
+			review = (Review)session.get(Review.class, reviewNo);
+			//review = (Review) session.createQuery("from Review r where r.userId=" + userId + "and r.movieId="+movieId);
 		}
 		catch(HibernateException e)
 		{
@@ -83,7 +87,7 @@ public class ManageReview {
 	
 
 	
-	public void deleteReview(Integer userId, Integer movieId)
+	public void deleteReview(Integer reviewNo)
 	{
 		Session session = factory.openSession();
 		Transaction tx = null;
@@ -92,7 +96,8 @@ public class ManageReview {
 		try
 		{
 			tx = session.beginTransaction();
-			review = (Review) session.createQuery("from Review r where r.userId=" + userId + "and r.movieId="+movieId);
+			//review = (Review) session.createQuery("from Review r where r.userId=" + userId + "and r.movieId="+movieId);
+			review = (Review)session.get(Review.class, reviewNo);
 			session.delete(review);
 			tx.commit();
 		}
@@ -107,7 +112,7 @@ public class ManageReview {
 		}
 	}
 	
-	public void updateRating(Integer userId, Integer movieId, Integer rating)
+	public void updateRating(Integer reviewNo, Integer rating)
 	{
 		Session session = factory.openSession();
 		Transaction tx = null;
@@ -116,8 +121,8 @@ public class ManageReview {
 		try
 		{
 			tx = session.beginTransaction();
-			review = (Review) session.createQuery("from Review r where r.userId=" + userId + "and r.movieId="+movieId);
-			
+			//review = (Review) session.createQuery("from Review r where r.userId=" + userId + "and r.movieId="+movieId);
+			review = (Review)session.get(Review.class, reviewNo);
 			review.setRating(rating);
 			session.update(rating);
 			
@@ -134,7 +139,7 @@ public class ManageReview {
 		}
 	}
 	
-	public void updateSummary(Integer userId, Integer movieId, String summary)
+	public void updateSummary(Integer reviewNo, String summary)
 	{
 		Session session = factory.openSession();
 		Transaction tx = null;
@@ -143,8 +148,8 @@ public class ManageReview {
 		try
 		{
 			tx = session.beginTransaction();
-			review = (Review) session.createQuery("from Review r where r.userId=" + userId + "and r.movieId="+movieId);
-			
+			//review = (Review) session.createQuery("from Review r where r.userId=" + userId + "and r.movieId="+movieId);
+			review = (Review)session.get(Review.class, reviewNo);
 			review.setSummary(summary);
 			session.update(summary);
 			
@@ -161,7 +166,7 @@ public class ManageReview {
 		}
 	}
 	
-	public void updateDate(Integer userId, Integer movieId, String date)
+	public void updateDate(Integer reviewNo, String date)
 	{
 		Session session = factory.openSession();
 		Transaction tx = null;
@@ -170,8 +175,8 @@ public class ManageReview {
 		try
 		{
 			tx = session.beginTransaction();
-			review = (Review) session.createQuery("from Review r where r.userId=" + userId + "and r.movieId="+movieId);
-			
+			//review = (Review) session.createQuery("from Review r where r.userId=" + userId + "and r.movieId="+movieId);
+			review = (Review)session.get(Review.class, date);
 			review.setDate(date);
 			session.update(date);
 			
@@ -212,5 +217,42 @@ public class ManageReview {
 			session.close();
 		}
 		return theReviews;
+	}
+	
+	public double averageReview(Integer movieId){
+		Session session = factory.openSession();
+		Transaction tx = null;
+		List<Review> theReviews = null;
+		List list;
+		double average = 0;
+		double count = 0;
+		try
+		{
+			tx = session.beginTransaction();
+			//User User = (User)session.get(User.class, UserID);
+			
+			theReviews = session.createQuery("from Review").list();//User is the class name not the table name!!!!
+			
+			for(Review r : theReviews) {
+				if(r.getMovieId()==movieId) {
+					average+=r.getRating();
+					count++;
+				}
+			}
+			average = average/count;
+			tx.commit();
+			return average;
+			
+		}
+		catch(HibernateException e)
+		{
+			if(tx != null) tx.rollback();
+			e.printStackTrace();
+		}
+		finally
+		{
+			session.close();
+		}
+		return average;
 	}
 }

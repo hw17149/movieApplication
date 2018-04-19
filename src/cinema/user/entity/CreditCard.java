@@ -20,7 +20,7 @@ public class CreditCard {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY) //identifying the primary key
 	@Column(name="creditCardNo")
-	private Integer creditCardNo; 
+	private String creditCardNo; 
 	
 	//Column name must be the exact name with case sensitivity of the attribute inside the db table.
 	@Column(name="expDate")
@@ -33,7 +33,7 @@ public class CreditCard {
 	private Integer userId;
 
 	//This constructor made by right clicking > Source > generate constructor with fields
-	public CreditCard(Integer creditCardNo, String expDate, String address, Integer userId) {
+	public CreditCard(String creditCardNo, String expDate, String address, Integer userId) {
 		super();
 		this.creditCardNo = creditCardNo;
 		this.expDate = expDate;
@@ -41,11 +41,11 @@ public class CreditCard {
 		this.userId = userId;
 	}
 
-	public Integer getCreditCardNo() {
+	public String getCreditCardNo() {
 		return creditCardNo;
 	}
 
-	public void setCreditCardNo(Integer creditCardNo) {
+	public void setCreditCardNo(String creditCardNo) {
 		this.creditCardNo = creditCardNo;
 	}
 
