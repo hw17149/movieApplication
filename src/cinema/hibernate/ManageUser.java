@@ -48,25 +48,16 @@ public class ManageUser {
 		//mu.deleteUser(1);
 		
 		ManageUser mu = new ManageUser();
-		//mu.deleteUser(1);
-		//mu.deleteUser(2);
-		mu.addUser(null, "HoonJae", "Won", "hoonjaewon1@gmail.com", "password", null, 1, false, false, "1996-01-06", false);
-		mu.addUser(null, "Dick", "Deng", "rzd83091@uga.edu", "password", null, 1, false, false, "1995-10-17", false);
+		//mu.addUser(null, "HoonJae", "Won", "hoonjaewon1@gmail.com", "password", null, 1, false, false, "1996-01-06", false);
+		//mu.addUser(null, "Dick", "Deng", "rzd83091@uga.edu", "password", null, 1, false, false, "1995-10-17", false);
 		//System.out.println("Hello");
+		List<User> uList = mu.getEmployees();
 		
-		List<User> uList = mu.getUsersList();
-		if(uList == null) {
-			System.out.println("NULL");
-		}
-		/*
 		for(User tempUser : uList) {
-			//System.out.println(tempUser.getUserId());
+			System.out.println(tempUser.getUserName());
 			//mu.updatePassword(tempUser.getUserId(), "pw");
 			
-			if(!mu.isValidEmail(tempUser.getEmail())) {
-				System.out.println("This user has this email!: " +tempUser);
-			}
-		}*/
+		}
 		/*
 		if(mu.IsValidLogin("rzd83091@uga.edu", "password")) {
 			System.out.println("This is right");
@@ -84,7 +75,8 @@ public class ManageUser {
 	
 	
 	
-	public Integer addUser(String userName, String fname, String lname, String email, String password, String location, int userType, boolean confirmation, boolean subscribed, String bDate, boolean resetPassword)
+	public Integer addUser(String userName, String fname, String lname, String email, String password, String location, int userType, boolean confirmation,
+			boolean subscribed, String bDate, boolean resetPassword, boolean banStatus)
 	{
 		Session session = factory.openSession();
 		Transaction tx = null;
@@ -93,7 +85,7 @@ public class ManageUser {
 		try
 		{
 			tx = session.beginTransaction();
-			User User = new User(userName, fname, lname, email, password, location, userType, confirmation, subscribed, bDate, resetPassword);
+			User User = new User(userName, fname, lname, email, password, location, userType, confirmation, subscribed, bDate, resetPassword, banStatus);
 			UserID = (Integer)session.save(User);
 			tx.commit();
 		}
@@ -153,6 +145,34 @@ public class ManageUser {
 		finally
 		{
 			if(temp != 2) 
+				return false;
+			else
+				return true;
+		}
+	}
+	
+	public static boolean isEmp(Integer UserID) {
+		int temp=0;
+		Session session = factory.openSession();
+		Transaction tx = null;
+		
+		try
+		{
+			tx = session.beginTransaction();
+			User User = (User)session.get(User.class, UserID);
+			
+			temp = User.getUserType();
+			tx.commit();
+			session.close();			
+		}
+		catch(HibernateException e)
+		{
+			if(tx != null) tx.rollback();
+			e.printStackTrace();
+		}
+		finally
+		{
+			if(temp != 3) 
 				return false;
 			else
 				return true;
@@ -233,6 +253,33 @@ public class ManageUser {
 			session.close();
 		}
 	}
+	
+	public void updateUserName(Integer UserID, String username)
+	{
+		Session session = factory.openSession();
+		Transaction tx = null;
+		
+		try
+		{
+			tx = session.beginTransaction();
+			User User = (User)session.get(User.class, UserID);
+			
+			User.setUserName(username);
+			session.update(User);
+			
+			tx.commit();
+		}
+		catch(HibernateException e)
+		{
+			if(tx != null) tx.rollback();
+			e.printStackTrace();
+		}
+		finally
+		{
+			session.close();
+		}
+	}
+
 	
 	public void updateLname(Integer UserID, String lname)
 	{
@@ -390,6 +437,32 @@ public class ManageUser {
 		}
 	}
 	
+	public void updateBanStatus(Integer UserID, boolean banStatus)
+	{
+		Session session = factory.openSession();
+		Transaction tx = null;
+		
+		try
+		{
+			tx = session.beginTransaction();
+			User User = (User)session.get(User.class, UserID);
+			
+			User.setBanStatus(banStatus);
+			session.update(User);
+			
+			tx.commit();
+		}
+		catch(HibernateException e)
+		{
+			if(tx != null) tx.rollback();
+			e.printStackTrace();
+		}
+		finally
+		{
+			session.close();
+		}
+	}
+	
 	public List<User> getUsersList()
 	{
 		Session session = factory.openSession();
@@ -401,6 +474,35 @@ public class ManageUser {
 			//User User = (User)session.get(User.class, UserID);
 			
 			theUsers = session.createQuery("from User").list();//User is the class name not the table name!!!!
+			
+			tx.commit();
+			return theUsers;
+		}
+		catch(HibernateException e)
+		{
+			if(tx != null) tx.rollback();
+			e.printStackTrace();
+		}
+		finally
+		{
+			session.close();
+		}
+		return theUsers;
+		
+	}
+	
+	//Returns list of Employees and Managers which are userTypes 3 and 4
+	public List<User> getEmployees()
+	{
+		Session session = factory.openSession();
+		Transaction tx = null;
+		List<User> theUsers = null;
+		try
+		{
+			tx = session.beginTransaction();
+			//User User = (User)session.get(User.class, UserID);
+			
+			theUsers = session.createQuery("from User u where u.userType >=" + 3).list();
 			
 			tx.commit();
 			return theUsers;
@@ -453,6 +555,40 @@ public class ManageUser {
 			session.close();
 		}
 		return valid;
+	}
+	
+	public boolean isConfirmed(String email) {
+		Session session = factory.openSession();
+		Transaction tx = null;
+		List<User> theUsers = null;
+		int counter = 0;
+		try
+		{
+			tx = session.beginTransaction();
+			//User User = (User)session.get(User.class, UserID);
+			
+			theUsers = session.createQuery("from User").list();//User is the class name not the table name!!!!
+			for(User tempUser : theUsers) {
+				if(tempUser.getEmail().equals(email)) {
+					if(!tempUser.getConfirmation())
+						return false;
+					else
+						return true;
+				}
+			}
+			
+			tx.commit();
+		}
+		catch(HibernateException e)
+		{
+			if(tx != null) tx.rollback();
+			e.printStackTrace();
+		}
+		finally
+		{
+			session.close();
+		}
+		return false;
 	}
 	
 	 
@@ -535,16 +671,28 @@ public class ManageUser {
 	
 	
 	
-	
 	public User getByEmail(String email) {
 		Session session = factory.openSession();
 		List<User> uList = getUsersList();
 		User theUser = null;
-		
+		Transaction tx = null;
 		try
 		{
+			tx = session.beginTransaction();
 			
-			uList = session.createQuery("from User u where u.email=" + email).list();//User is the class name not the table name!!!!
+			uList = session.createQuery("from User").list();//User is the class name not the table name!!!!
+			for(User tempUser : uList) {
+				if(tempUser.getEmail().equals(email)) {
+					//counter++;
+					//System.out.println("COUNTER: "+counter);
+					//System.out.println("input email "+email);
+					//System.out.println("db email "+tempUser.getEmail());
+					//System.out.println("DUPLICATE EMAIL DETECTED!!!");
+					return tempUser;
+				}
+			}
+			tx.commit();
+			//theUser = (User)session.createQuery("from User u where u.email=" + email);//User is the class name not the table name!!!!
 			//User = (User)session.get(User.class, UserID);
 		}
 		catch(HibernateException e)

@@ -28,7 +28,7 @@ public class ManageMovie {
 		ManageMovie mm = new ManageMovie();
 		//mm.addMovie();
 		
-		List<Movie> movies = mm.getAlphabetical();
+		List<Movie> movies = mm.getMoviesList();
 		for(Movie m: movies) {
 			System.out.println(m.getTitle());
 		}

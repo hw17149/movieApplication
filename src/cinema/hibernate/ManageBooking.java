@@ -15,6 +15,7 @@ import org.hibernate.cfg.Configuration;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import cinema.user.entity.Booking;
+import cinema.user.entity.Review;
 
 public class ManageBooking {
 
@@ -258,4 +259,30 @@ public class ManageBooking {
 			session.close();
 		}
 	}
+	public List<Booking> getBookingList(){
+		Session session = factory.openSession();
+		Transaction tx = null;
+		List<Booking> theBookings = null;
+		try
+		{
+			tx = session.beginTransaction();
+			//User User = (User)session.get(User.class, UserID);
+			
+			theBookings = session.createQuery("from Booking").list();//User is the class name not the table name!!!!
+			
+			tx.commit();
+			return theBookings;
+		}
+		catch(HibernateException e)
+		{
+			if(tx != null) tx.rollback();
+			e.printStackTrace();
+		}
+		finally
+		{
+			session.close();
+		}
+		return theBookings;
+	}
+	
 }

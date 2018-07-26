@@ -19,6 +19,7 @@ import java.sql.DriverManager;
 import cinema.user.entity.User;
 import cinema.user.entity.Movie;
 import cinema.user.entity.Review;
+import cinema.user.entity.ShowTime;
 
 public class ManageReview {
 
@@ -31,22 +32,22 @@ public class ManageReview {
 	public static void main(String[] args) {
 		ManageReview rw = new ManageReview();
 		
-		System.out.println(rw.averageReview(1));
+		rw.addReview(1, 3, "It was not the same as the books", 2, "asdfgh");
+		
+		System.out.println(rw.averageReview(3));
 	}
 	
-	
-	
-	public Integer Review(Integer userId, Integer movieId, String summary, Integer rating, String date)
+	public Integer addReview(Integer userId, Integer movieId, String summary, Integer rating, String date)
 	{
 		Session session = factory.openSession();
 		Transaction tx = null;
-		Integer promoId = null;	
+		Integer reviewNum = null;	
 		
 		try
 		{
 			tx = session.beginTransaction();
 			Review review = new Review(userId, movieId, summary, rating, date);
-			//creditCardNo = (Integer)session.save(showTime);
+			reviewNum = (Integer)session.save(review);
 			tx.commit();
 		}
 		catch(HibernateException e)
@@ -59,7 +60,7 @@ public class ManageReview {
 			session.close();
 		}
 		
-		return promoId;
+		return reviewNum;
 	}
 
 	public Review getReview(Integer reviewNo)
@@ -255,4 +256,32 @@ public class ManageReview {
 		}
 		return average;
 	}
+	public List<Review> getOrderedByDate()
+	{
+		Session session = factory.openSession();
+		Transaction tx = null;
+		List<Review> ordered = null;
+		try
+		{
+			tx = session.beginTransaction();
+			//Movie Movie = (Movie)session.get(Movie.class, MovieID);
+			
+			ordered = session.createQuery("from Review r ORDER BY r.date DESC").list();//I HOPE THIS WORKS
+			
+			tx.commit();
+			return ordered;
+		}
+		catch(HibernateException e)
+		{
+			if(tx != null) tx.rollback();
+			e.printStackTrace();
+		}
+		finally
+		{
+			session.close();
+		}
+		return ordered;
+		
+	}
+	
 }

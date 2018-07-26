@@ -6,7 +6,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>Insert title here</title>
+<title>User registeration happening</title>
 </head>
 <body>
 <%
@@ -33,8 +33,9 @@
 	
 	ManageUser mu = new ManageUser();
 	if(!mu.isValidEmail(email)){ %>
-		email already registered, redirecting back to sign up page
-		<% response.setHeader("Refresh", "3; register.jsp"); %>
+	<script>alert("email already registered!");
+	</script>
+		<% response.setHeader("Refresh", "0; register.jsp"); %>
 	<% } else {
 	
 	final String un = "cinema4050@gmail.com";
@@ -43,9 +44,10 @@
 	Properties props = sendemail.makeProps();
 	sendemail.registerConfirmation(props, un, pw, email);
 	
-	mu.addUser(userName, fname, lname, email, password, location, userType, confirmation, sub, bDate, resetPassword);
+	mu.addUser(userName, fname, lname, email, password, location, userType, confirmation, sub, bDate, resetPassword, false);
 %>
-	<b>Confirmation sent to </b><%= request.getParameter("email")%><b>. Click the link sent to confirm account.</b><br/>
-	<b>Redirecting to home page</b> <% response.setHeader("Refresh", "3; index.html");} %>
+	<script>alert("Confirmation sent! Please verify the email!");
+	</script>
+	<b>Redirecting to home page</b> <% response.setHeader("Refresh", "0; index.jsp");} %>
 </body>
 </html>

@@ -15,29 +15,48 @@
 	
 	
 	ManageUser mu = new ManageUser();
-	if(mu.isValidEmail(email)){ %>
-		email is not already registered on our site, redirecting to registration page
-		<% response.setHeader("Refresh", "3; register.jsp"); %>
-	<% } else {
+	if(mu.getByEmail(email).getBanStatus()){
+		%> <script>alert("YOU ARE BANNED")</script><%
+	response.setHeader("Refresh", "0; index.jsp");
+	}else if(email == ""){ %>
+	<script>alert("Enter Email!")
+</script>
+	<% response.setHeader("Refresh", "0; login.jsp"); %>
+<% }else if(mu.isValidEmail(email)){ %>
+		<script>alert("Email is not valid! Register if you dont have an account!");
+	</script>
+		<% response.setHeader("Refresh", "0; login.jsp"); %>
+	<% }else if(!mu.isConfirmed(email)){ %>
+		<script>alert("Email is not confirmed! Confirm email through email registered!");
+		</script>
+		<% response.setHeader("Refresh", "0; login.jsp");
+	}else {
 	
 	
 	boolean goodLogin = mu.IsValidLogin(email, password);
+	boolean goodLogin2 = mu.isConfirmed(email);
 	User u = mu.getByEmail(email);
-	if(goodLogin){
+	if(goodLogin && goodLogin2){
+		int id = u.getUserId();
+		session.setAttribute("currentID", id);
 		u.setResetPassword(true);
-		if(mu.isAdmin(u.getUserId())){ %>
+		if(mu.isEmp(u.getUserId())){ %>
+			Employee login successful. Redirecting...
+			<%
+			response.setHeader("Refresh", "1; employee.jsp");
+		}else if(mu.isAdmin(u.getUserId())){ %>
 			Admin login successful. Redirecting...
 		<%
-		response.setHeader("Refresh", "3; admin.jsp");
+		response.setHeader("Refresh", "1; admin.jsp");
 		}else{%>
 		<form action="add" method="post">
   			<input type="hidden" name="fname" value="<% u.getFname(); %>"><br>
   		</form>
-	  Login successful. Redirecting.....
-		<%response.setHeader("Refresh", "3; index2.html");}
+		<%response.setHeader("Refresh", "0; index2.jsp");}
 	}else{ %>
-		Incorrect email/password combination, redirecting to Login page.
-	<% response.setHeader("Refresh", "3; login.jsp");
+		<script>alert("Incorrect email/password combination!");
+		</script>
+	<% response.setHeader("Refresh", "0; login.jsp");
 	}
 	%>
 	

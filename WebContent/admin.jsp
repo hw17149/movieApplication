@@ -2,7 +2,7 @@
 <%@ page import= "cinema.hibernate.*, java.util.*, javax.mail.*" %>
 <%@ page import = "javax.mail.internet.*,javax.activation.*, java.io.*"%>
 <%@ page import = "javax.servlet.http.*,javax.servlet.*" %>
-<%@ page import = "cinema.user.entity.*" %>
+<%@ page import = "cinema.user.entity.*, java.time.*" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -14,58 +14,197 @@
     margin: 10px;
     border-style: groove;
 }
-
-
 table {
     font-family: arial, sans-serif;
     border-collapse: collapse;
-    width: 80%;
+    width: 70%;
 }
-
 td, th {
     border: 1px solid #dddddd;
     text-align: left;
     padding: 5px;
 }
-
 tr:nth-child(even) {
     background-color: #dddddd;
 }
-
 td:first-child{
   width: 5%;
 }
 </style>
   <!--  Meta  -->
- 
+  <meta charset="UTF-8" />
   <title>admin</title>
   
+  <!-- Menu Bar -->
+  <ul>
+  <li><a href="admin.jsp">Home</a></li>
+	<li><a href="allMovies.jsp">Current Showings</a></li>
+  <li style="float:right"><a class="active" href="logout.jsp">Logout</a></li>
+  </ul>
+  
+  <!--  Styles  -->
+  <link rel="stylesheet" href="styles/index.processed.css">
+  <title>admin</title>
+ 
  
 </head>
 
-
 <body>
-
+<%
+ManageUser mu = new ManageUser();
+User tempU;
+if(request.getSession().getAttribute("currentID") == null){
+	response.setHeader("Refresh", "0; index.jsp");
+}
+tempU = mu.getUser((Integer)request.getSession().getAttribute("currentID"));
+if(tempU.getUserType()!=2){
+%><script>alert("YOU ARE NOT AN ADMIN >:^U")</script>
+<% response.setHeader("Refresh", "0; index2.jsp");}%>
 <h2>Schedule</h2>
+<script>
+ var n =  new Date();
+ var m = n.getMonth() + 1;
+ var d = n.getDate();
+ document.getElementById("date").innerHTML = m + "/" + d;
+ function validateForm(){
+	 var x = document.forms["schedule"]["showDay"].value;
+	 var y = document.forms["schedule"]["showMonth"].value;
+	 if(y == m){
+		 if(x <= d){
+			 alert("Date already has passed!");
+			 return false;
+		 }
+	 }
+ }
+ </script>
 <table>
   <tr>
+    <th>ID</th>
     <th>Title</th>
-    <th>Hall</th>
-    <th>Date</th>
-    <th>time</th>
-    <th></th>  
+    <th>Showing Time</th>
+    <th></th>
   </tr>
-  <tr>
-    <th>Harry Potter</th>
-    <th>1</th>
-    <th>2018-05-05</th>
-    <th>12:30PM-2:00PM</th>
-    <th><button type="button">Edit</button>
-		<button type="button">Delete</button>
-	</th> 
-  </tr>
+  <%
+  	ManageMovie mm = new ManageMovie();
+  	ManageShowTime ms = new ManageShowTime();
+  	List<Movie> mList = mm.getMoviesList();
+  	List<ShowTime> stList = ms.getShowTimeList();
+  	for(Movie tempMovie : mList) {
+	%>
+	
+	 <tr>
+	 	<td><%=tempMovie.getMovieId() %></td>
+	 	<td><%=tempMovie.getTitle() %></td>
+	 	<td>
+	 		<form action="showTime.jsp" method="POST">
+     		<input type="hidden" name="mid" value="<%=tempMovie.getMovieId()%>">
+			<button type="submit">show Times</button>
+			</form>
+	 	</td>
+     	<td>
+     		<form action="deleteMovie.jsp" method="POST">
+     		<input type="hidden" name="mid" value="<%=tempMovie.getMovieId()%>">
+			<button type="submit">Delete</button>
+			</form>
+			<form action="movie.jsp" method="POST">
+     		<input type="hidden" name="mid" value="<%=tempMovie.getMovieId()%>">
+			<button type="submit">Go</button>
+			</form>
+			<form action="hall.jsp" method="POST" name="schedule"
+					onsubmit="return validateForm()">
+     		<input type="hidden" name="mid" value="<%=tempMovie.getMovieId()%>">
+     		<select id="hall" name="hall" required>
+     			<option value="">Select Hall</option>
+     			<option value="1">Hall 1</option>
+     			<option value="2">Hall 2</option>
+     			<option value="3">Hall 3</option>
+     			<option value="4">Hall 4</option>
+     		</select>
+     		<select id="time" name="time" required>
+     			<option value="">Select Time</option>
+     			<option value="A">1:00 PM</option>
+     			<option value="B">4:00 PM</option>
+     			<option value="C">7:00 PM</option>
+     			<option value="D">10:00 PM</option>
+     		</select>
+			<select id="showMonth" name="showMonth" required>
+				<option value="">Select Month</option>
+				<% Calendar now = Calendar.getInstance();
+					int month = now.get(Calendar.MONTH) + 1; // Note: zero based!
+					int day = now.get(Calendar.DAY_OF_MONTH);
+				for(int i=month;i< month+3;i++){
+					if(i > 12){%>
+						<option value="<%= i-12%>"><%= i-12 %></option>
+				<%  }else{ %>
+						<option value="<%= i%>"><%= i%></option>
+				<% }}%>
+				
+     		</select>
+     		<select id="showDay" name="showDay" required>
+				<option value="">Select Day</option>
+				<% for(int i=1;i< 32;i++){ %>
+					<option value="<%= i%>"><%= i%></option>
+					<%}%>
+		
+			</select>
+			<button type="submit">Schedule</button>
+			</form>
+		</td>
+     </tr>
+<%} %>
 </table>
-<button type="button">Add Movie</button>
+
+<form action="addMovie.jsp" method="POST">
+<p>Add Movie</p>
+  <input type="text" placeholder="Title" name="title" required>
+  <input type="text" placeholder="icon" name="icon">
+  <input type="text" placeholder="Summary" name="summary">
+  <input type="text" placeholder="Genre" name="genre">
+  <input type="text" placeholder="Length" name="length">
+  <input type="text" placeholder="FilmRating" name="filmRating">
+  <button type="submit">ADD MOVIE</button>
+</form>
+<p></p>
+<h2>Promotions</h2>
+<table>
+  <tr>
+    <th>ID</th>
+    <th>Discount Amount</th>
+    <th>Code</th>
+    <th>Currently Active?</th>
+    <th>Activate/Deactivate</th>
+  </tr>
+  <%
+  	ManagePromotion mp = new ManagePromotion();
+  	List<Promotion> pList = mp.getPromotionList();
+  	for(Promotion tempPromotion : pList) {
+	%>
+	
+	 <tr>
+	 	<td><%=tempPromotion.getPromoId() %></td>
+	 	<td><%=tempPromotion.getDiscount() %></td>
+	 	<td><%=tempPromotion.getPromoCode() %></td>
+	 	<td><%if(tempPromotion.getExpire()){ %>
+	 		YES<%}else{ %>
+	 		NO<%} %></td>
+	 	<td>
+	 		<form action="expire.jsp" method="POST">
+	 			<input type="hidden" name="pid" value="<%=tempPromotion.getPromoId() %>">
+	 			<button type="submit">Update</button>
+	 		</form>
+	 	</td>
+     	
+     </tr>
+<%} %>
+</table>
+
+<form action="addPromo.jsp" method="POST">
+<p>Add Promo</p>
+  <input type="text" placeholder="Code" name="code" required>
+  <input type="text" placeholder="Amount" name="amount" required>
+  <button type="submit">ADD PROMO</button>
+</form>
+<p></p>
 
 <p></p>
 <h2>User List</h2>
@@ -77,22 +216,27 @@ td:first-child{
     <th>Name</th>
     <th>Email</th>
     <th>Birthday</th>
+    <th>Banned?</th>
     <th></th>
   </tr>
   <%
-  	ManageUser mu = new ManageUser();
+  	
   	List<User> uList = mu.getUsersList();
   	for(User tempUser : uList) {
 	%>
+	
 	 <tr>
 	 	<td><%=tempUser.getUserType() %></td>
 	 	<td><%=tempUser.getUserId() %></td>
      	<td><%=tempUser.getUserName()  %></td>
      	<td><%=tempUser.getEmail() %></td>
      	<td><%=tempUser.getBdate() %></td>
+     	<td><%if(tempUser.getBanStatus()){ %> YES <%}else{ %> NO <%} %></td>
      	<td>
-     		<button type="button">Edit</button>
-			<button type="button">Delete</button>
+     		<form action="deleteUser.jsp" method="POST">
+     		<input type="hidden" name="uid" value="<%=tempUser.getUserId()%>">
+			<button type="submit">Ban/Unban</button>
+			</form>
 		</td>
      </tr>
   <% 	
@@ -101,13 +245,14 @@ td:first-child{
 </table>
 
 <div>
+
 <form action="sent2.jsp" method="POST">
-  <p>Add User</p>
+  <h2>Add User</h2>
   <input type="text" placeholder="User Type" name="usertype" required>
   <input type="text" placeholder="User Name" name="username">
   <input type="text" placeholder="First Name" class="require" name="first-name" required>
   <input type="text" placeholder="Last Name" name="last-name" required><p></p>
-  <label for="birthdate"><b>Date of Birth</b></label>
+  <p>Date of Birth
       <select id="birthyear" name="birthyear"placeholder="%00">
       	<option value="%00">Select Year</option>
         <option value="2018">2018</option>
@@ -278,10 +423,10 @@ td:first-child{
         <option value="29">29</option>
         <option value="30">30</option>
         <option value="31">31</option>
-      </select><p></p>
+      </select></p>
 
       <input type="text" placeholder="Enter Email" name="mail" required>
-      <input type="password" placeholder="Enter Password" name="psw" required><p></p>
+      <input type="password" placeholder="Enter Password" name="password" required><p></p>
   
 		  <input type="radio" name="subscribe" value="true" checked="checked"> Yes<br>
 		  <input type="radio" name="subscribe" value="false"> No<br>
@@ -298,7 +443,6 @@ td:first-child{
   <p>Percentage: <input type="text" name="amount-off"></p>
   <p><button>Add</button>
 </div> -->
-
 
 </body>
 </html>

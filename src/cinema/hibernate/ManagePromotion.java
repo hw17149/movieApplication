@@ -14,25 +14,29 @@ import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import cinema.user.entity.CreditCard;
+
+import cinema.user.entity.Movie;
 import cinema.user.entity.Promotion;
 import cinema.user.entity.Ticket;
+import cinema.user.entity.User;
 
 public class ManagePromotion {
 
 	//create session factory
 	private static SessionFactory factory = new Configuration()
 			.configure("hibernate.cfg.xml")
-			.addAnnotatedClass(CreditCard.class)
+			.addAnnotatedClass(Promotion.class)
 			.buildSessionFactory();
 	
 	public static void main(String[] args) {
+		ManagePromotion mp = new ManagePromotion();
 		
+		System.out.println(mp.getPromotion(1).getPromoCode());	
 	}
 	
 	
 	
-	public Integer addPromotion(Integer price, String expire, double discount, String promoCode)
+	public Integer addPromotion(boolean expire, double discount, String promoCode)
 	{
 		Session session = factory.openSession();
 		Transaction tx = null;
@@ -41,8 +45,8 @@ public class ManagePromotion {
 		try
 		{
 			tx = session.beginTransaction();
-			Promotion promotion = new Promotion(price, expire, discount, promoCode);
-			//creditCardNo = (Integer)session.save(showTime);
+			Promotion promotion = new Promotion(expire, discount, promoCode);
+			promoId = (Integer)session.save(promotion);
 			tx.commit();
 		}
 		catch(HibernateException e)
@@ -104,7 +108,7 @@ public class ManagePromotion {
 		}
 	}
 	
-	public void updateExpireDate(Integer promoId, String expire)
+	public void updateExpireDate(Integer promoId)
 	{
 		Session session = factory.openSession();
 		Transaction tx = null;
@@ -114,7 +118,7 @@ public class ManagePromotion {
 			tx = session.beginTransaction();
 			Promotion promotion = (Promotion)session.get(Promotion.class, promoId);
 			
-			promotion.setExpire(expire);
+			promotion.setExpire(!promotion.getExpire());
 			session.update(promotion);
 			
 			tx.commit();
@@ -182,19 +186,20 @@ public class ManagePromotion {
 		}
 	}
 	
-	/*public List<User> listOfUsers(Integer userId){
+	public List<Promotion> getPromotionList()
+	{
 		Session session = factory.openSession();
 		Transaction tx = null;
-		List<User> theUsers = null;
+		List<Promotion> thePromotions = null;
 		try
 		{
 			tx = session.beginTransaction();
-			//User User = (User)session.get(User.class, UserID);
+			//Movie Movie = (Movie)session.get(Movie.class, MovieID);
 			
-			theUsers = session.createQuery("from CreditCard c where c.userId=" + userId).list();//User is the class name not the table name!!!!
+			thePromotions = session.createQuery("from Promotion").list();//Movie is the class name not the table name!!!!
 			
 			tx.commit();
-			return theUsers;
+			return thePromotions;
 		}
 		catch(HibernateException e)
 		{
@@ -205,8 +210,43 @@ public class ManagePromotion {
 		{
 			session.close();
 		}
-		return theUsers;
+		return thePromotions;
 		
-		
-	}*/
+	}
+	
+	public int isValidPromo(String code) {
+		Session session = factory.openSession();
+		Transaction tx = null;
+		List<Promotion> thePromotions = null;
+		int counter = 0;
+		try
+		{
+			tx = session.beginTransaction();
+			//User User = (User)session.get(User.class, UserID);
+			
+			thePromotions = session.createQuery("from Promotion").list();//User is the class name not the table name!!!!
+			for(Promotion tempPromo : thePromotions) {
+				if(tempPromo.getPromoCode().equals(code)) {
+					counter++;
+					System.out.println("COUNTER: "+counter);
+					System.out.println("input code "+code);
+					System.out.println("db promotion "+tempPromo.getPromoCode());
+					System.out.println("VALID PROMO!");
+					return tempPromo.getPromoId();
+				}
+			}
+			
+			tx.commit();
+		}
+		catch(HibernateException e)
+		{
+			if(tx != null) tx.rollback();
+			e.printStackTrace();
+		}
+		finally
+		{
+			session.close();
+		}
+		return -1;
+	}
 }

@@ -25,6 +25,8 @@ public class Price {
 	//Column name must be the exact name with case sensitivity of the attribute inside the db table.
 	@Column(name="price")
 	private Integer price;
+	
+	public Price() {}
 
 	//This constructor made by right clicking > Source > generate constructor with fields
 	public Price(Integer ticketType, Integer price) {

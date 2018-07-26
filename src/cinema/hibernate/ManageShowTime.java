@@ -14,6 +14,8 @@ import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import java.sql.Connection;
 import java.sql.DriverManager;
+
+import cinema.user.entity.Movie;
 import cinema.user.entity.ShowTime;
 import cinema.user.entity.User;
 
@@ -26,6 +28,10 @@ public class ManageShowTime {
 			.buildSessionFactory();
 	
 	public static void main(String[] args) {
+		
+		ManageShowTime ms = new ManageShowTime();
+		ms.reserveSeat(5, 0);
+		
 		
 	}
 	
@@ -78,7 +84,33 @@ public class ManageShowTime {
 		return showTime;
 	}
 	
-
+	public List<ShowTime> getShowTimeList()
+	{
+		Session session = factory.openSession();
+		Transaction tx = null;
+		List<ShowTime> theShowTime = null;
+		try
+		{
+			tx = session.beginTransaction();
+			//User User = (User)session.get(User.class, UserID);
+			
+			theShowTime = session.createQuery("from ShowTime").list();//Show Time is the class name not the table name!!!!
+			
+			tx.commit();
+			return theShowTime;
+		}
+		catch(HibernateException e)
+		{
+			if(tx != null) tx.rollback();
+			e.printStackTrace();
+		}
+		finally
+		{
+			session.close();
+		}
+		return theShowTime;
+		
+	}
 	
 	public void deleteShowTime(int showTimeId)
 	{
@@ -221,7 +253,11 @@ public class ManageShowTime {
 			seatArray = showTime.getSeatArray();
 			
 			updatedArray = seatArray.toCharArray();
-			updatedArray[seatNumber] = '1';
+			if(updatedArray[seatNumber] == '1') {
+				updatedArray[seatNumber] = '0';
+			}else {
+				updatedArray[seatNumber] = '1';
+			}
 			seatArray = updatedArray.toString();
 			
 			showTime.setSeatArray(seatArray);
@@ -266,7 +302,7 @@ public class ManageShowTime {
 		}
 	}
 	
-	public boolean isOccupied(Integer showTimeId, Integer seatNumber) {
+	public boolean isOccupied(Integer showTimeId, Integer seatNumber) {//starts at 0
 		Session session = factory.openSession();
 		Transaction tx = null;
 		boolean isOccupied = false;
@@ -296,4 +332,85 @@ public class ManageShowTime {
 		}
 		return isOccupied;
 	}
+	public void reserveSeat(Integer showTimeId, Integer seatNumber) {
+		Session session = factory.openSession();
+		Transaction tx = null;
+		String seatArray = null;
+		StringBuilder sb;
+		try
+		{
+			tx = session.beginTransaction();
+			ShowTime showTime = (ShowTime)session.get(ShowTime.class, showTimeId);
+			seatArray = showTime.getSeatArray();
+			sb = new StringBuilder(seatArray);
+			sb.setCharAt(seatNumber,'1');
+			showTime.setSeatArray(sb.toString());
+			
+			tx.commit();
+		}
+		catch(HibernateException e)
+		{
+			if(tx != null) tx.rollback();
+			e.printStackTrace();
+		}
+		finally
+		{
+			session.close();
+		}
+	}
+	
+	public List<ShowTime> getOrderedByDate()
+	{
+		Session session = factory.openSession();
+		Transaction tx = null;
+		List<ShowTime> ordered = null;
+		try
+		{
+			tx = session.beginTransaction();
+			//Movie Movie = (Movie)session.get(Movie.class, MovieID);
+			
+			ordered = session.createQuery("from ShowTime st ORDER BY st.showingDate, st.showingTime").list();//I HOPE THIS WORKS
+			
+			tx.commit();
+			return ordered;
+		}
+		catch(HibernateException e)
+		{
+			if(tx != null) tx.rollback();
+			e.printStackTrace();
+		}
+		finally
+		{
+			session.close();
+		}
+		return ordered;
+		
+	}
+	public void unreserveSeat(Integer showTimeId, Integer seatNumber) {
+		Session session = factory.openSession();
+		Transaction tx = null;
+		String seatArray = null;
+		StringBuilder sb;
+		try
+		{
+			tx = session.beginTransaction();
+			ShowTime showTime = (ShowTime)session.get(ShowTime.class, showTimeId);
+			seatArray = showTime.getSeatArray();
+			sb = new StringBuilder(seatArray);
+			sb.setCharAt(seatNumber,'0');
+			showTime.setSeatArray(sb.toString());
+			
+			tx.commit();
+		}
+		catch(HibernateException e)
+		{
+			if(tx != null) tx.rollback();
+			e.printStackTrace();
+		}
+		finally
+		{
+			session.close();
+		}
+	}
+	
 }

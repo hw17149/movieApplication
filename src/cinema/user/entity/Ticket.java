@@ -16,7 +16,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name="ticket")
 public class Ticket {
-	
+	 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY) //identifying the primary key
 	@Column(name="ticketId")
@@ -41,7 +41,7 @@ public class Ticket {
 	@Column(name="movieId")
 	private Integer movieId;
 	
-	@Column(name="showTime")
+	@Column(name="showTimeId")
 	private Integer showTimeId;
 	
 	@Column(name="userId")

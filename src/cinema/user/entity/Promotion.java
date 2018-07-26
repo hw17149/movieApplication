@@ -23,11 +23,9 @@ public class Promotion {
 	private Integer promoId; 
 	
 	//Column name must be the exact name with case sensitivity of the attribute inside the db table.
-	@Column(name="price")
-	private Integer price;
 	
 	@Column(name="expire")
-	private String expire;
+	private boolean expire;
 	
 	@Column(name="discount")
 	private double discount;
@@ -36,10 +34,11 @@ public class Promotion {
 	private String promoCode;
 
 	
+	public Promotion() {}
+	
 	//This constructor made by right clicking > Source > generate constructor with fields
-	public Promotion(Integer price, String expire, double discount, String promoCode) {
+	public Promotion(boolean expire, double discount, String promoCode) {
 		super();
-		this.price = price;
 		this.expire = expire;
 		this.discount = discount;
 		this.promoCode = promoCode;
@@ -53,19 +52,11 @@ public class Promotion {
 		this.promoId = promoId;
 	}
 
-	public Integer getPrice() {
-		return price;
-	}
-
-	public void setPrice(Integer price) {
-		this.price = price;
-	}
-
-	public String getExpire() {
+	public boolean getExpire() {
 		return expire;
 	}
 
-	public void setExpire(String expire) {
+	public void setExpire(boolean expire) {
 		this.expire = expire;
 	}
 

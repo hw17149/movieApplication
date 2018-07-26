@@ -22,7 +22,6 @@
       
       <!-- Update with your password -->
       <property name = "hibernate.connection.password">
-         rzd83091
       </property>
       
       <!-- Echo the SQL to stdout -->

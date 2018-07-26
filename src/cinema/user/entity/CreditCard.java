@@ -31,6 +31,8 @@ public class CreditCard {
 	
 	@Column(name="userId")
 	private Integer userId;
+	
+	public CreditCard() {}
 
 	//This constructor made by right clicking > Source > generate constructor with fields
 	public CreditCard(String creditCardNo, String expDate, String address, Integer userId) {
